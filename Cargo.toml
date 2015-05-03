@@ -2,6 +2,11 @@
 name = "hprof"
 version = "0.1.0"
 authors = ["Corey Richardson <corey@octayn.net>"]
+description = "A simple hierarchical profiler"
+documentation = "https://cmr.github.io/cmr/hprof"
+repository = "https://github.com/cmr/hprof"
+readme = "README.md"
+license = "BSL-1.0"
 
 [dependencies]
 clock_ticks = "*"

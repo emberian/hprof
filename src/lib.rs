@@ -1,3 +1,8 @@
+//          Copyright Corey Richardson 2015
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
 //! A real-time hierarchical profiler.
 
 #[macro_use]
@@ -185,7 +190,7 @@ impl ProfileNode {
         for _ in 0..indent {
             print!(" ");
         }
-        println!("{} - {}ns ({}%)", self.name, self.total_time.get(), self.total_time.get() as f64 / self.parent.as_ref().map(|p| p.total_time.get()).unwrap_or(self.total_time.get()) as f64);
+        println!("{} - {}ns ({}%)", self.name, self.total_time.get(), 100.0 * (self.total_time.get() as f64 / self.parent.as_ref().map(|p| p.total_time.get()).unwrap_or(self.total_time.get()) as f64));
         for c in &*self.children.borrow() {
             c.print(indent+2);
         }
