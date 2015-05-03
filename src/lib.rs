@@ -123,6 +123,12 @@ impl Profiler {
     pub fn enable(&self) {
         self.enabled.set(true);
     }
+
+    /// Toggle the profiler enabledness.
+    pub fn toggle(&self) {
+        self.enabled.set(!self.enabled.get());
+    }
+
 }
 
 /// A single node in the profile tree.
