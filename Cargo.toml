@@ -3,5 +3,9 @@ name = "hprof"
 version = "0.1.0"
 authors = ["Corey Richardson <corey@octayn.net>"]
 
+[dependencies]
+clock_ticks = "*"
+log = "*"
+
 [features]
 unstable = []
