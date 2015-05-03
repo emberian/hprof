@@ -16,6 +16,7 @@ use std::rc::Rc;
 pub struct Profiler {
     root: Rc<ProfileNode>,
     current: RefCell<Rc<ProfileNode>>,
+    enabled: Cell<bool>,
 }
 
 /// A "guard" for calling `Profiler::leave` when it is destroyed.
@@ -26,12 +27,16 @@ impl<'a> Drop for ProfileGuard<'a> {
     }
 }
 
+macro_rules! early_leave {
+    ($slf:ident) => (if $slf.enabled.get() == false { return })
+}
+
 impl Profiler {
     /// Create a new profiler with the given name for the root node.
     pub fn new(name: &'static str) -> Profiler {
         let root = Rc::new(ProfileNode::new(None, name));
         root.call();
-        Profiler { root: root.clone(), current: RefCell::new(root) }
+        Profiler { root: root.clone(), current: RefCell::new(root), enabled: Cell::new(true) }
     }
 
     /// Enter a profile node for `name`, returning a guard object that will `leave` on destruction.
@@ -42,6 +47,7 @@ impl Profiler {
 
     /// Enter a profile node for `name`.
     pub fn enter_noguard(&self, name: &'static str) {
+        early_leave!(self);
         {
             let mut curr = self.current.borrow_mut();
             if curr.name != name {
@@ -53,6 +59,7 @@ impl Profiler {
 
     /// Leave the current profile node.
     pub fn leave(&self) {
+        early_leave!(self);
         let mut curr = self.current.borrow_mut();
         curr.ret();
         if let Some(parent) = curr.parent.clone() {
@@ -81,6 +88,7 @@ impl Profiler {
     /// Logs an error if there are pending `leave` calls, and later attempts to
     /// print timing data will be met with sadness in the form of `NaN`s.
     pub fn end_frame(&self) {
+        early_leave!(self);
         if &*self.root as *const ProfileNode as usize != &**self.current.borrow() as *const ProfileNode as usize {
             error!("Pending `leave` calls on Profiler::frame");
         } else {
@@ -93,12 +101,27 @@ impl Profiler {
     /// Resets timing data. Logs an error if there are pending `leave` calls, but there are
     /// otherwise no ill effects.
     pub fn start_frame(&self) {
+        early_leave!(self);
         if &*self.root as *const ProfileNode as usize != &**self.current.borrow() as *const ProfileNode as usize {
             error!("Pending `leave` calls on Profiler::frame");
         }
         *self.current.borrow_mut() = self.root.clone();
         self.root.reset();
         self.root.call();
+    }
+
+    /// Disable the profiler.
+    ///
+    /// All calls until `enable` will do nothing.
+    pub fn disable(&self) {
+        self.enabled.set(false);
+    }
+
+    /// Enable the profiler.
+    ///
+    /// Calls will take effect until `disable` is called.
+    pub fn enable(&self) {
+        self.enabled.set(true);
     }
 }
 
