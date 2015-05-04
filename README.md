@@ -51,48 +51,16 @@ This software is licensed under the [Boost Software
 License](http://www.boost.org/users/license.html). In short, you are free to
 use, modify, and redistribute in any form without attribution.
 
-# Unidiomatic Example
-
-```rust
-fn main() {
-    let p = hprof::Profiler::new("main loop");
-
-    loop {
-        p.start_frame();
-
-        p.enter_noguard("setup");
-        std::thread::sleep_ms(1);
-        p.leave();
-
-        p.enter_noguard("physics");
-        std::thread::sleep_ms(2);
-        p.leave();
-
-        p.enter_noguard("render");
-        std::thread::sleep_ms(8);
-        p.leave();
-
-        p.end_frame();
-
-        // this would usually depend on debug data, or use custom functionality for drawing the
-        // debug information.
-        if true {
-            p.print_timing();
-        }
-        break;
-    }
-}
-```
-
-Output:
+# Example Output
 
 ```
 Timing information for main loop:
-  setup - 1149702ns (10.062608%)
-  physics - 2116811ns (18.527096%)
-  render - 8141904ns (71.260892%)
+  setup - 1133523ns (6.725068%)
+  physics - 2258292ns (13.3982%)
+    collision - 1140731ns (50.512998%)
+    update positions - 1108782ns (49.098257%)
+  render - 13446767ns (79.778204%)
+    cull - 1134725ns (8.438646%)
+    gpu submit - 2197346ns (16.341073%)
+    gpu wait - 10088879ns (75.028287%)
 ```
-
-A more typical usage would just call `p.enter("foo")` at the start of a large
-chunk of processing that should be measured, and have the guards call `leave`
-automatically.
