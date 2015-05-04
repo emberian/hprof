@@ -4,6 +4,55 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 //! A real-time hierarchical profiler.
+//!
+//! # What is hierarchical profiling?
+//!
+//! Hierarchical profiling is based on the observation that games are typically
+//! organized into a "tree" of behavior. You have an AI system that does path
+//! planning, making tactical decisions, etc. You have a physics system that does
+//! collision detection, rigid body dynamics, etc. A tree might look like:
+//!
+//! - Physics
+//!     - Collision detection
+//!         - Broad phase
+//!         - Narrow phase
+//!     - Fluid simulation
+//!     - Rigid body simulation
+//!         - Collision resolution
+//!         - Update positions
+//! - AI
+//!     - Path planning
+//!     - Combat tactics
+//!     - Build queue maintenance
+//! - Render
+//!     - Frustum culling
+//!     - Draw call sorting
+//!     - Draw call submission
+//!     - GPU wait
+//!
+//! A hierarchical profiler will annotate this tree with how much time each step
+//! took. This is an extension of timer-based profiling, where a timer is used to
+//! measure how long a block of code takes to execute. Rather than coding up a
+//! one-time timer, you merely call `Profiler::enter("description of thing")` and
+//! a new entry will be made in the profile tree.
+//!
+//! The idea came from a 2002 article in Game Programming Gems 3, "Real-Time
+//! Hierarchical Profiling" by Greg Hjelstrom and Byon Garrabrant from Westwood
+//! Studios. They report having thousands of profile nodes active at a time.
+//!
+//! There are two major ways to use this library: with explicit profilers, and with an implicit
+//! profiler.
+//!
+//! # Implicit (thread-local) profiler
+//!
+//! To use the implicit profiler, call `hprof::start_frame()`, `hprof::end_frame()`, and
+//! `hprof::enter("name")`. Destructors will take care of the rest. You can access the profiler
+//! using `hprof::profiler()`.
+//!
+//! # Explicit profilers
+//!
+//! Use `Profiler::new()` and pass it around/store it somewhere (for example, using
+//! [`current`](https://github.com/PistonDevelopers/current)).
 
 #[macro_use]
 extern crate log;
@@ -11,6 +60,8 @@ extern crate clock_ticks;
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+
+thread_local!(static HPROF: Profiler = Profiler::new("root profiler"));
 
 /// A single tree of profile data.
 pub struct Profiler {
@@ -224,4 +275,20 @@ impl ProfileNode {
             c.print(indent+2);
         }
     }
+}
+
+pub fn profiler() -> &'static Profiler {
+    HPROF.with(|p| unsafe { std::mem::transmute(p) } )
+}
+
+pub fn enter(name: &'static str) -> ProfileGuard<'static> {
+    HPROF.with(|p| unsafe { std::mem::transmute::<_, &'static Profiler>(p) }.enter(name) )
+}
+
+pub fn start_frame() {
+    HPROF.with(|p| p.start_frame())
+}
+
+pub fn end_frame() {
+    HPROF.with(|p| p.end_frame())
 }
