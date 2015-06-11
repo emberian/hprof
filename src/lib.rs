@@ -270,7 +270,7 @@ impl ProfileNode {
         for _ in 0..indent {
             print!(" ");
         }
-        println!("{} - {}ns ({}%)", self.name, self.total_time.get(), 100.0 * (self.total_time.get() as f64 / self.parent.as_ref().map(|p| p.total_time.get()).unwrap_or(self.total_time.get()) as f64));
+        println!("{} - {}ns ({:.1}%)", self.name, self.total_time.get(), 100.0 * (self.total_time.get() as f64 / self.parent.as_ref().map(|p| p.total_time.get()).unwrap_or(self.total_time.get()) as f64));
         for c in &*self.children.borrow() {
             c.print(indent+2);
         }
