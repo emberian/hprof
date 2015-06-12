@@ -270,7 +270,15 @@ impl ProfileNode {
         for _ in 0..indent {
             print!(" ");
         }
-        println!("{} - {}ns ({}%)", self.name, self.total_time.get(), 100.0 * (self.total_time.get() as f64 / self.parent.as_ref().map(|p| p.total_time.get()).unwrap_or(self.total_time.get()) as f64));
+        let parent_time = self.parent
+                              .as_ref()
+                              .map(|p| p.total_time.get())
+                              .unwrap_or(self.total_time.get()) as f64;
+        println!("{} - {} ({:.1}%)",
+            self.name,
+            Nanoseconds(self.total_time.get()),
+            100.0 * (self.total_time.get() as f64 / parent_time)
+        );
         for c in &*self.children.borrow() {
             c.print(indent+2);
         }
@@ -291,4 +299,21 @@ pub fn start_frame() {
 
 pub fn end_frame() {
     HPROF.with(|p| p.end_frame())
+}
+
+// used to do a pretty printing of time
+struct Nanoseconds(u64);
+
+impl std::fmt::Display for Nanoseconds {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        if self.0 < 1_000 {
+            write!(f, "{}ns", self.0)
+        } else if self.0 < 1_000_000 {
+            write!(f, "{:.1}us", self.0 as f64 / 1_000.)
+        } else if self.0 < 1_000_000_000 {
+            write!(f, "{:.1}ms", self.0 as f64 / 1_000_000.)
+        } else {
+            write!(f, "{:.1}s", self.0 as f64 / 1_000_000_000.)
+        }
+    }
 }
