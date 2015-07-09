@@ -274,11 +274,24 @@ impl ProfileNode {
                               .as_ref()
                               .map(|p| p.total_time.get())
                               .unwrap_or(self.total_time.get()) as f64;
-        println!("{} - {} ({:.1}%)",
-            self.name,
-            Nanoseconds(self.total_time.get()),
-            100.0 * (self.total_time.get() as f64 / parent_time)
-        );
+        let percent = 100.0 * (self.total_time.get() as f64 / parent_time);
+        if percent.is_infinite() {
+            println!("{name} - {calls} * {each} = {total} @ {hz:.1}hz",
+                name  = self.name,
+                calls = self.calls.get(),
+                each = Nanoseconds((self.total_time.get() as f64 / self.calls.get() as f64) as u64),
+                total = Nanoseconds(self.total_time.get()),
+                hz = self.calls.get() as f64 / self.total_time.get() as f64 * 1e9f64
+            );
+        } else {
+            println!("{name} - {calls} * {each} = {total} ({percent:.1}%)",
+                name  = self.name,
+                calls = self.calls.get(),
+                each = Nanoseconds((self.total_time.get() as f64 / self.calls.get() as f64) as u64),
+                total = Nanoseconds(self.total_time.get()),
+                percent = percent
+            );
+        }
         for c in &*self.children.borrow() {
             c.print(indent+2);
         }
