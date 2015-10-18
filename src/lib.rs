@@ -112,9 +112,10 @@ impl Profiler {
     pub fn leave(&self) {
         early_leave!(self);
         let mut curr = self.current.borrow_mut();
-        curr.ret();
-        if let Some(parent) = curr.parent.clone() {
-            *curr = parent;
+        if curr.ret() == true {
+            if let Some(parent) = curr.parent.clone() {
+                *curr = parent;
+            }
         }
     }
 
