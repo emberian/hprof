@@ -1,6 +1,6 @@
 [package]
 name = "hprof"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["Corey Richardson <corey@octayn.net>"]
 description = "A simple hierarchical profiler"
 documentation = "https://cmr.github.io/hprof"
@@ -9,8 +9,8 @@ readme = "README.md"
 license = "BSL-1.0"
 
 [dependencies]
-clock_ticks = "*"
-log = "*"
+clock_ticks = "0.1.0"
+log = "0.3.4"
 
 [features]
 unstable = []
