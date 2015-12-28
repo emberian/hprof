@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Profiler` struct in crate `hprof`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Profiler">
+
+    <title>hprof::Profiler - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>hprof</a></p><script>window.sidebarCurrent = {name: 'Profiler', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>hprof</a>::<wbr><a class='struct' href=''>Profiler</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-12' class='srclink' href='../src/hprof/lib.rs.html#67-71' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Profiler {
+    // some fields omitted
+}</pre><div class='docblock'><p>A single tree of profile data.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../hprof/struct.Profiler.html' title='hprof::Profiler'>Profiler</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../hprof/struct.Profiler.html' title='hprof::Profiler'>Profiler</a></code></h4>
+<div class='docblock'><p>Create a new profiler with the given name for the root node.</p>
+</div><h4 id='method.enter' class='method'><code>fn <a href='#method.enter' class='fnname'>enter</a>(&amp;self, name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../hprof/struct.ProfileGuard.html' title='hprof::ProfileGuard'>ProfileGuard</a></code></h4>
+<div class='docblock'><p>Enter a profile node for <code>name</code>, returning a guard object that will <code>leave</code> on destruction.</p>
+</div><h4 id='method.enter_noguard' class='method'><code>fn <a href='#method.enter_noguard' class='fnname'>enter_noguard</a>(&amp;self, name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>)</code></h4>
+<div class='docblock'><p>Enter a profile node for <code>name</code>.</p>
+</div><h4 id='method.leave' class='method'><code>fn <a href='#method.leave' class='fnname'>leave</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Leave the current profile node.</p>
+</div><h4 id='method.print_timing' class='method'><code>fn <a href='#method.print_timing' class='fnname'>print_timing</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Print out the current timing information in a very naive way.</p>
+</div><h4 id='method.root' class='method'><code>fn <a href='#method.root' class='fnname'>root</a>(&amp;self) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;</code></h4>
+<div class='docblock'><p>Return the root profile node for inspection.</p>
+
+<p>This root will always be valid and reflect the current state of the <code>Profiler</code>.
+It is not advised to inspect the data between calls to <code>start_frame</code> and <code>end_frame</code>.</p>
+</div><h4 id='method.end_frame' class='method'><code>fn <a href='#method.end_frame' class='fnname'>end_frame</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Finish a frame.</p>
+
+<p>Logs an error if there are pending <code>leave</code> calls, and later attempts to
+print timing data will be met with sadness in the form of <code>NaN</code>s.</p>
+</div><h4 id='method.start_frame' class='method'><code>fn <a href='#method.start_frame' class='fnname'>start_frame</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Start a frame.</p>
+
+<p>Resets timing data. Logs an error if there are pending <code>leave</code> calls, but there are
+otherwise no ill effects.</p>
+</div><h4 id='method.disable' class='method'><code>fn <a href='#method.disable' class='fnname'>disable</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Disable the profiler.</p>
+
+<p>All calls until <code>enable</code> will do nothing.</p>
+</div><h4 id='method.enable' class='method'><code>fn <a href='#method.enable' class='fnname'>enable</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Enable the profiler.</p>
+
+<p>Calls will take effect until <code>disable</code> is called.</p>
+</div><h4 id='method.toggle' class='method'><code>fn <a href='#method.toggle' class='fnname'>toggle</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Toggle the profiler enabledness.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "hprof";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

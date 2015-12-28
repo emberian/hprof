@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ProfileNode` struct in crate `hprof`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ProfileNode">
+
+    <title>hprof::ProfileNode - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>hprof</a></p><script>window.sidebarCurrent = {name: 'ProfileNode', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>hprof</a>::<wbr><a class='struct' href=''>ProfileNode</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-64' class='srclink' href='../src/hprof/lib.rs.html#189-206' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct ProfileNode {
+    pub name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>,
+    pub calls: <a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.Cell.html' title='core::cell::Cell'>Cell</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>&gt;,
+    pub total_time: <a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.Cell.html' title='core::cell::Cell'>Cell</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>&gt;,
+    pub start_time: <a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.Cell.html' title='core::cell::Cell'>Cell</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>&gt;,
+    pub recursion: <a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.Cell.html' title='core::cell::Cell'>Cell</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>&gt;,
+    pub parent: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;&gt;,
+    pub children: <a class='struct' href='https://doc.rust-lang.org/nightly/core/cell/struct.RefCell.html' title='core::cell::RefCell'>RefCell</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;&gt;&gt;,
+}</pre><div class='docblock'><p>A single node in the profile tree.</p>
+
+<p><em>NOTE</em>: While the fields are public and are a cell, it is not advisable to modify them.</p>
+</div><h2 class='fields'>Fields</h2>
+<table><tr class='stab '>
+                                  <td id='structfield.name'><code>name</code></td><td></td></tr><tr class='stab '>
+                                  <td id='structfield.calls'><code>calls</code></td><td><div class='docblock'><p>Number of calls made to this node.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.total_time'><code>total_time</code></td><td><div class='docblock'><p>Total time in ns used by this node and all of its children.</p>
+
+<p>Computed after the last pending <code>ret</code>.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.start_time'><code>start_time</code></td><td><div class='docblock'><p>Timestamp in ns when the first <code>call</code> was made to this node.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.recursion'><code>recursion</code></td><td><div class='docblock'><p>Number of recursive calls made to this node since the first <code>call</code>.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.parent'><code>parent</code></td><td><div class='docblock'><p>Parent in the profile tree.</p>
+</div></td></tr><tr class='stab '>
+                                  <td id='structfield.children'><code>children</code></td><td><div class='docblock'><p>Child nodes.</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(parent: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;&gt;, name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a></code></h4>
+<h4 id='method.reset' class='method'><code>fn <a href='#method.reset' class='fnname'>reset</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Reset this node and its children, seting relevant fields to 0.</p>
+</div><h4 id='method.make_child' class='method'><code>fn <a href='#method.make_child' class='fnname'>make_child</a>(&amp;self, me: <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;, name: &amp;'static <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>) -&gt; <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html' title='alloc::rc::Rc'>Rc</a>&lt;<a class='struct' href='../hprof/struct.ProfileNode.html' title='hprof::ProfileNode'>ProfileNode</a>&gt;</code></h4>
+<div class='docblock'><p>Create a child named <code>name</code>.</p>
+</div><h4 id='method.call' class='method'><code>fn <a href='#method.call' class='fnname'>call</a>(&amp;self)</code></h4>
+<div class='docblock'><p>Enter this profile node.</p>
+</div><h4 id='method.ret' class='method'><code>fn <a href='#method.ret' class='fnname'>ret</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Return from this profile node, returning true if there are no pending recursive calls.</p>
+</div><h4 id='method.print' class='method'><code>fn <a href='#method.print' class='fnname'>print</a>(&amp;self, indent: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>)</code></h4>
+<div class='docblock'><p>Print out the current timing information in a very naive way.</p>
+
+<p>Uses <code>indent</code> to determine how deep to indent the line.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "hprof";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
