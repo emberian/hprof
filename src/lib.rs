@@ -56,10 +56,10 @@
 
 #[macro_use]
 extern crate log;
-extern crate clock_ticks;
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+use std::time::Instant;
 
 thread_local!(static HPROF: Profiler = Profiler::new("root profiler"));
 
@@ -195,7 +195,7 @@ pub struct ProfileNode {
     /// Computed after the last pending `ret`.
     pub total_time: Cell<u64>,
     /// Timestamp in ns when the first `call` was made to this node.
-    pub start_time: Cell<u64>,
+    pub start_time: Cell<Instant>,
     /// Number of recursive calls made to this node since the first `call`.
     pub recursion: Cell<u32>,
     /// Parent in the profile tree.
@@ -211,7 +211,7 @@ impl ProfileNode {
             name: name,
             calls: Cell::new(0),
             total_time: Cell::new(0),
-            start_time: Cell::new(0),
+            start_time: Cell::new(Instant::now()),
             recursion: Cell::new(0),
             parent: parent,
             children: RefCell::new(Vec::new())
@@ -222,7 +222,7 @@ impl ProfileNode {
     pub fn reset(&self) {
         self.calls.set(0);
         self.total_time.set(0);
-        self.start_time.set(0);
+        self.start_time.set(Instant::now());
         self.recursion.set(0);
         for child in &*self.children.borrow() {
             child.reset()
@@ -247,7 +247,7 @@ impl ProfileNode {
         self.calls.set(self.calls.get() + 1);
         let rec = self.recursion.get();
         if rec == 0 {
-            self.start_time.set(clock_ticks::precise_time_ns());
+            self.start_time.set(Instant::now());
         }
         self.recursion.set(rec + 1);
     }
@@ -256,8 +256,8 @@ impl ProfileNode {
     pub fn ret(&self) -> bool {
         let rec = self.recursion.get();
         if rec == 1 {
-            let time = clock_ticks::precise_time_ns();
-            let durr = time - self.start_time.get();
+            let elapsed = self.start_time.get().elapsed();
+            let durr = elapsed.as_secs() * 1000_000_000 + elapsed.subsec_nanos() as u64;
             self.total_time.set(self.total_time.get() + durr);
         }
         self.recursion.set(rec - 1);
